@@ -11,7 +11,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 const Employee = require("./lib/Employee");
 
-
+const employees = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 inquirer
@@ -37,15 +37,14 @@ inquirer
         const id = answers.employeeID;
         const email = answers.employeeEmail;
 
-        const employee = new Employee(id, email);
-
         if(position === 'Manager'){
             inquirer.prompt({
                 type: 'input',
                 message: 'What\'s your office number?',
                 name: 'officeNum'
             }).then(function(answer){
-                Manager.offNum = answer;
+                const manager = new Manager(id, email, answer)
+                employees.push(manager);
             });
             
         }else if (position === 'Engineer') {
@@ -54,7 +53,8 @@ inquirer
                 message: 'What\'s your GitHub ID?',
                 name: 'githubID'
             }).then(function(answer){
-                Engineer.github = answer;
+                const engineer = new Engineer(id, email, answer)
+                employees.push(engineer);
             });
         }else {
             inquirer.prompt({
@@ -62,10 +62,12 @@ inquirer
                 message: 'What school are you with?',
                 name: 'schoolName'
             }).then(function(answer){
-                Intern.school = answer;
+                const intern = new Intern(id, email, answer)
+                employees.push(intern);
             });
         }
-    })
+        render(employees);
+    });
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
